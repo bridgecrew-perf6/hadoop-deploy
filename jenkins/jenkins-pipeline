@@ -1,0 +1,20 @@
+#!groovy
+
+properties([disableConcurrentBuilds()])
+
+pipeline{
+    agent any
+    stages{
+        stage('SCM Checkout'){
+            steps{
+                git branch: 'main', credentialsId: 'github_key', url: 'git@github.com:dxart3/hadoop-deploy.git'
+                
+            }
+        }
+        stage('Execute programm'){
+            steps{
+                ansiblePlaybook become: true, becomeUser: 'user', colorized: true, credentialsId: 'github_key', disableHostKeyChecking: true, installation: 'ansible2', inventory: 'ansible/hosts.inv', playbook: 'ansible/playbook.yml', sudoUser: 'user'
+            }
+        }
+    }
+}
