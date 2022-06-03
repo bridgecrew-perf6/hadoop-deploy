@@ -30,14 +30,14 @@
     file: path=/opt/hadoop src=/opt/hadoop-3.1.4 state=link owner=user group=user
     
   - name: hadoop config files
-    copy: dest=/opt/hadoop/etc/hadoop/{{item}} src=ansible/files/{{item}} mode=0644 owner=user group=user
+    copy: dest=/opt/hadoop/etc/hadoop/{{item}} src=files/{{item}} mode=0644 owner=user group=user
     with_items:
         - hadoop-env.sh
         - core-site.xml
         - hdfs-site.xml
 
   - name: hadoop java activation
-    copy: dest=/opt/hadoop/share/hadoop/common/activation-1.1.1.jar src=ansible/files/activation-1.1.1.jar mode=0644 owner=user group=user
+    copy: dest=/opt/hadoop/share/hadoop/common/activation-1.1.1.jar src=files/activation-1.1.1.jar mode=0644 owner=user group=user
 
   - name: hadoop format namenode
     command: /opt/hadoop/bin/hdfs namenode -format
