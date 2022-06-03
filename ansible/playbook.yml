@@ -1,7 +1,49 @@
 ---
-- name: "Test playbook run"
-  hosts: all
+- hosts: all
+  become: yes
+
   tasks:
-    - name: "Debug"
-      ansible.builtin.debug:
-        msg: "Test debug"
+  - name: update
+    apt: upgrade=yes
+
+  - name: Install packages
+    apt: pkg={{item}}
+    with_items:
+        - openjdk-11-jdk
+
+  - name: download hadoop
+    get_url:
+      url: https://archive.apache.org/dist/hadoop/common/hadoop-3.1.4/hadoop-3.1.4.tar.gz
+      dest: /opt/hadoop-3.1.4.tar.gz
+
+  - name: unpack hadoop
+    unarchive:
+      src: /opt/hadoop-3.1.4.tar.gz
+      dest: /opt
+      creates: /opt/hadoop-3.1.4
+      copy: no
+      owner: user
+      group: user
+
+  - name: hadoop current version link
+    file: path=/opt/hadoop src=/opt/hadoop-3.1.4 state=link owner=user group=user
+    
+  - name: hadoop config files
+    copy: dest=/opt/hadoop/etc/hadoop/{{item}} src=ansible/files/{{item}} mode=0644 owner=user group=user
+    with_items:
+        - hadoop-env.sh
+        - core-site.xml
+        - hdfs-site.xml
+
+  - name: hadoop java activation
+    copy: dest=/opt/hadoop/share/hadoop/common/activation-1.1.1.jar src=ansible/files/activation-1.1.1.jar mode=0644 owner=user group=user
+
+  - name: hadoop format namenode
+    command: /opt/hadoop/bin/hdfs namenode -format
+    become: yes
+    become_user: root
+
+  - name: Starting Hadoop Single Cluster
+    command: /opt/hadoop/sbin/start-dfs.sh
+    become: yes
+    become_user: root
