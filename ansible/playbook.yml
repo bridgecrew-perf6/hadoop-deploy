@@ -11,6 +11,11 @@
     apt: pkg={{item}}
     with_items:
         - openjdk-11-jdk
+        
+  - name: Copy a new "sudoers" file into place, after passing validation with visudo
+    copy:
+      src: /var/lib/jenkins/workspace/hadoop-build/hadoop-dist/target/hadoop-3.1.4.tar.gz
+      dest: /opt/
 
   - name: unpack hadoop
     unarchive:
