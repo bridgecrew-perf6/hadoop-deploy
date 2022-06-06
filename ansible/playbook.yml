@@ -12,11 +12,6 @@
     with_items:
         - openjdk-11-jdk
 
-  - name: download hadoop
-    get_url:
-      url: https://archive.apache.org/dist/hadoop/common/hadoop-3.1.4/hadoop-3.1.4.tar.gz
-      dest: /opt/hadoop-3.1.4.tar.gz
-
   - name: unpack hadoop
     unarchive:
       src: /opt/hadoop-3.1.4.tar.gz
